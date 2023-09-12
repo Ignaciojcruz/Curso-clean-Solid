@@ -1,8 +1,15 @@
-export class LocalDataBaseService {
+import localPosts from '../data/local-database.json';
+import { Post } from './05-dependency-b';
+
+export abstract class PostProvider {
+    abstract getPosts(): Promise<Post[]>
+}
+
+export class LocalDataBaseService implements PostProvider {
 
     constructor() {}
 
-    async getFakePosts() {
+    async getPosts() {
         return [
             {
                 'userId': 1,
@@ -18,4 +25,23 @@ export class LocalDataBaseService {
             }]
     }
 
+}
+
+export class JsonDataBaseService implements PostProvider{
+    constructor() {}
+
+    async getPosts() {
+        return localPosts
+    }
+}
+
+export class WebApiPostService implements PostProvider{
+    constructor() {}
+
+    async getPosts() {
+        const resp = await fetch( 'https://jsonplaceholder.typicode.com/posts' );
+        const data = await resp.json();
+
+        return data;
+    }
 }
